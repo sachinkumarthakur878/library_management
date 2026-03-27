@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { Server_URL } from "../../utils/config";
 import { showErrorToast, showSuccessToast } from "../../utils/toasthelper";
-import "./AddLibrarian.css";
+import "./addLibrarian.css";
 
 export default function AddLibrarian() {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
