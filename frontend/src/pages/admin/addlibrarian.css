@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap');
+
+.addlib-page {
+  min-height: calc(100vh - 60px);
+  background: #0f1117;
+  font-family: 'DM Sans', sans-serif;
+  color: #e8eaf0;
+  padding: 2.5rem 2rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.addlib-container { width: 100%; max-width: 500px; }
+
+.addlib-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.addlib-title {
+  font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 800;
+  color: #fff; margin: 0 0 0.3rem; letter-spacing: -0.4px;
+}
+
+.addlib-subtitle { color: #6b7280; margin: 0; font-size: 0.9rem; line-height: 1.5; }
+
+.addlib-card {
+  background: #161922; border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 18px; padding: 2rem;
+}
+
+.addlib-card__icon { font-size: 2.5rem; text-align: center; margin-bottom: 1.5rem; }
+
+.addlib-form { display: flex; flex-direction: column; gap: 1.1rem; }
+
+.addlib-field { display: flex; flex-direction: column; gap: 0.4rem; }
+
+.addlib-label {
+  font-size: 0.78rem; font-weight: 600; color: #9ca3af;
+  text-transform: uppercase; letter-spacing: 0.07em;
+}
+
+.addlib-input {
+  width: 100%; padding: 0.75rem 1rem;
+  background: #0f1117; border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 10px; color: #e8eaf0;
+  font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.addlib-input::placeholder { color: #4b5563; }
+.addlib-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+}
+.addlib-input--error { border-color: #ef4444 !important; }
+.addlib-error { font-size: 0.75rem; color: #f87171; }
+
+.addlib-info {
+  display: flex; gap: 0.6rem; align-items: flex-start;
+  background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.15);
+  border-radius: 10px; padding: 0.9rem 1rem;
+}
+.addlib-info span { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+.addlib-info p { font-size: 0.8rem; color: #8b8fa8; margin: 0; line-height: 1.55; }
+
+.addlib-submit {
+  margin-top: 0.5rem; width: 100%; padding: 0.85rem;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff; border: none; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s ease;
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+}
+.addlib-submit:hover:not(:disabled) {
+  transform: translateY(-1px); box-shadow: 0 6px 20px rgba(99,102,241,0.35);
+}
+.addlib-submit:disabled { opacity: 0.65; cursor: not-allowed; }
+
+.addlib-spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff; border-radius: 50%;
+  animation: addlibSpin 0.7s linear infinite;
+}
+@keyframes addlibSpin { to { transform: rotate(360deg); } }

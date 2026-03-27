@@ -23,6 +23,7 @@ const ReturnRequest = lazy(() => import('./pages/librarian/ReturnRequest'));
 const AboutUs = lazy(() => import('./pages/user/AboutUs'));
 const ContactUs = lazy(() => import('./pages/user/ContactUs'));
 const BooksBorrowed = lazy(() => import('./pages/librarian/BooksBorrowed'));
+const FineManagement = lazy(() => import('./pages/librarian/FineManagement'));
 const ForgotPassword = lazy(() => import('./pages/user/ForgetPassword/ForgetPassword'));
 const VerifyOTP = lazy(() => import('./pages/user/ForgetPassword/VerifyOtp'));
 const ResetPassword = lazy(() => import('./pages/user/ForgetPassword/UpdatePassword'));
@@ -85,6 +86,7 @@ function App() {
           <Route path='issuerequest' element={<LibrarianRequests/>}/>
           <Route path='returnrequest' element={<ReturnRequest/>}/>
           <Route path='issued' element={<BooksBorrowed/>}/>
+          <Route path='fines' element={<FineManagement/>}/>
         </Route>
         
         <Route path='/user' element={<Userlayout/>}>

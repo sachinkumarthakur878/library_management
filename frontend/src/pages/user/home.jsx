@@ -1,251 +1,29 @@
-// import React, { useState, useEffect } from "react";
-// import { Server_URL } from "../../utils/config";
-// import axios from "axios";
-// import "./home.css";
-// import { Link } from "react-router-dom";
-// import { FiBook, FiSearch, FiClock, FiUser, FiCalendar } from "react-icons/fi";
-// import Preloader from "../../components/Preloader";
-
-// export default function Home() {
-//   const [categories, setCategories] = useState([]);
-//   const [newArrivals, setNewArrivals] = useState([]);
-//   const [stats, setStats] = useState({
-//     totalBooks: 0,
-//     availableBooks: 0,
-//     students: 0
-//   });
-//   const [loading, setLoading] = useState(true);
-
-//   // const fetchData = async () => {
-//   //   try {
-
-//   //     setLoading(true);
-//   //     const categoriesResponse = await axios.get(Server_URL + 'books');
-//   //     if (categoriesResponse.data.error) {
-//   //       alert(categoriesResponse.data.message);
-//   //     } else {
-//   //       console.log("category")
-//   //       console.log(categoriesResponse.data.books)
-//   //       const {books} = categoriesResponse.data;
-
-//   //       const categoryCountMap = {};
-//   //     books.forEach((book) => {
-//   //       const cat = book.category;
-//   //       categoryCountMap[cat] = (categoryCountMap[cat] || 0) + 1;
-//   //     });
-
-//   //     setCategoryCount(categoryCountMap);
-
-//   //       setCategories(books);
-//   //     }
-
-      
-//   //     const arrivalsResponse = await axios.get(Server_URL + 'books/new');
-//   //     console.log(arrivalsResponse);
-//   //     if (!arrivalsResponse.data.error) {
-//   //       setNewArrivals(arrivalsResponse.data.books);
-//   //       setStats(arrivalsResponse.data);
-//   //     }
-
-//   //   } catch (error) {
-//   //     console.error("Error fetching data:", error);
-//   //   }
-//   //    finally {
-//   //     setLoading(false);
-//   //   }
-//   // };
-
-
-//  const fetchData = React.useCallback(async () => {
-//   try {
-//     setLoading(true);
-//     const { data } = await axios.get(Server_URL + "home");
-//     if (!data.error) {
-//       setStats(data.stats);
-//       setCategories(data.categories);
-//       setNewArrivals(data.newArrivals);
-//     }
-//   } catch (error) {
-//     console.error("Error fetching data:", error);
-//   } finally {
-//     setLoading(false);
-//   }
-// }, []);
-
-//   useEffect(() => {
-//     fetchData();
-//   }, [fetchData]);
-
-//    if (loading) return <Preloader />;  
-
-//   return (
-//     <div className="library-homepage">
- 
-//       <header className="hero-section">
-//         <div className="hero-overlay"></div>
-//         <div className="container hero-content">
-//           <h1 className="hero-title">Welcome to College Central Library</h1>
-//           <p className="hero-subtitle">Access academic resources, textbooks, and research materials</p>
-          
-          
-          
-//           <div className="hero-buttons">
-//             <Link to="/books" className="btn btn-primary">
-//             <FiBook size={18} className="mr-2" />
-//               Browse collections 
-//             </Link>
-          
-//           </div>
-//         </div>
-//       </header>
-
-     
-//       <section className="stats-section">
-//         <div className="container">
-//           <div className="stats-grid">
-//           <div className="stat-cardhome">
-//               <FiBook className="stat-icon" />
-//               <h3>{data?.totalCategories}</h3>
-//               <p>Total Categories</p>
-//             </div>
-//             <div className="stat-cardhome">
-//               <FiBook className="stat-icon" />
-//               <h3>{stats.totalBooks}+</h3>
-//               <p>Total Books</p>
-//             </div>
-           
-//             <div className="stat-cardhome">
-//               <FiUser className="stat-icon" />
-//               <h3>{stats.totalActiveStudents}</h3>
-//               <p>Active Students</p>
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-
-//       <section className="categories-section">
-//         <div className="container">
-//           <h2 className="section-title">Browse By Categories</h2>
-//           <p className="section-subtitle">Find resources for your courses</p>
-          
-//           <div className="categories-grid">
-//   {categories.map((cat, index) => (
-//     <div key={index} className="category-card">
-//       <div className="category-img-container">
-//         <img 
-//           src={cat.coverImage || "/images/default-subject.jpg"} 
-//           alt={cat.category} 
-//           loading="lazy"
-//         />
-//       </div>
-//       <div className="category-info">
-//         <h3>{cat.category}</h3>
-//         <p>Books: {cat.count}</p>
-//         <Link to={`/books?category=${cat.category}`} className="btn btn-outline">
-//           View Collection
-//         </Link>
-//       </div>
-//     </div>
-//   ))}
-// </div>
-
-          
-//           <div className="text-center">
-//             <Link to="/category" className="btn btn-view-all">
-//               View All Categories
-//             </Link>
-//           </div>
-//         </div>
-//       </section>
-
-    
-//       <section className="na-section">
-//   <div className="na-container">
-//     <h2 className="na-heading">New Arrivals</h2>
-//     <p className="na-subheading">Recently added to our collection</p>
-    
-//     <div className="na-grid-container">  
-//       {newArrivals.map((book, index) => (
-//         <div key={index} className="na-book-item">
-//           <div className="na-cover-wrapper">
-//             <img 
-//               src={book.coverImage || "/images/default-book.jpg"} 
-//               alt={book.title} 
-//               className="na-cover-image"
-//               loading="lazy"
-//             />
-//           </div>
-//           <div className="na-book-info">
-//             <h3 className="na-book-title">{book.title}</h3>
-//             <p className="na-book-author">{book.author}</p>
-//             <span className="na-book-category">{book.category}</span>
-//           </div>
-//         </div>
-//       ))}
-//     </div>
-//   </div>
-// </section>
-
-      
-//       <section className="hours-section">
-//         <div className="container">
-//           <h2 className="section-title">Library Hours</h2>
-//           <div className="hours-grid">
-//             <div className="hours-card">
-//               <FiClock className="hours-icon" />
-//               <h3>Regular Hours</h3>
-//               <p>Monday - Friday: 8:00 AM - 8:00 PM</p>
-//               <p>Saturday: 10:00 AM - 5:00 PM</p>
-//               <p>Sunday: Closed</p>
-//             </div>
-//             <div className="hours-card">
-//               <FiCalendar className="hours-icon" />
-//               <h3>Exam Period</h3>
-//               <p>Monday - Sunday: 7:00 AM - 11:00 PM</p>
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-//     </div>
-//   );
-// }
-
-
 import React, { useState, useEffect } from "react";
 import { Server_URL } from "../../utils/config";
 import axios from "axios";
 import "./home.css";
 import { Link } from "react-router-dom";
-import { FiBook, FiClock, FiUser, FiCalendar } from "react-icons/fi";
 import Preloader from "../../components/Preloader";
 
 export default function Home() {
-
   const [categories, setCategories] = useState([]);
   const [newArrivals, setNewArrivals] = useState([]);
-
   const [stats, setStats] = useState({
     totalBooks: 0,
-    availableBooks: 0,
     totalCategories: 0,
-    totalActiveStudents: 0
+    totalActiveStudents: 0,
   });
-
   const [loading, setLoading] = useState(true);
-
 
   const fetchData = React.useCallback(async () => {
     try {
       setLoading(true);
-
       const { data } = await axios.get(Server_URL + "home");
-
       if (!data.error) {
         setStats(data.stats || {});
         setCategories(data.categories || []);
         setNewArrivals(data.newArrivals || []);
       }
-
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -253,165 +31,157 @@ export default function Home() {
     }
   }, []);
 
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   if (loading) return <Preloader />;
 
   return (
-    <div className="library-homepage">
+    <div className="home-page">
 
-      <header className="hero-section">
-        <div className="hero-overlay"></div>
-        <div className="container hero-content">
-          <h1 className="hero-title">Welcome to College Central Library</h1>
-          <p className="hero-subtitle">
-            Access academic resources, textbooks, and research materials
+      {/* Hero */}
+      <section className="home-hero">
+        <div className="home-hero__bg"></div>
+        <div className="home-hero__content">
+          <span className="home-hero__badge">AGC College Library</span>
+          <h1 className="home-hero__title">
+            Your Gateway to
+            <span className="home-hero__title-accent"> Knowledge</span>
+          </h1>
+          <p className="home-hero__sub">
+            Access thousands of academic resources, textbooks, and research materials — all in one place.
           </p>
-
-          <div className="hero-buttons">
-            <Link to="/books" className="btn btn-primary">
-              <FiBook size={18} className="mr-2" />
-              Browse collections
+          <div className="home-hero__actions">
+            <Link to="/books" className="home-hero__btn home-hero__btn--primary">
+              Browse Books
+            </Link>
+            <Link to="/category" className="home-hero__btn home-hero__btn--ghost">
+              View Categories
             </Link>
           </div>
         </div>
-      </header>
-
-
-      <section className="stats-section">
-        <div className="container">
-          <div className="stats-grid">
-
-            <div className="stat-cardhome">
-              <FiBook className="stat-icon" />
-              <h3>{stats?.totalCategories || 0}+</h3>
-              <p>Total Categories</p>
-            </div>
-
-            <div className="stat-cardhome">
-              <FiBook className="stat-icon" />
-              <h3>{stats?.totalBooks || 0}+</h3>
-              <p>Total Books</p>
-            </div>
-
-            <div className="stat-cardhome">
-              <FiUser className="stat-icon" />
-              <h3>{stats?.totalActiveStudents || 0}</h3>
-              <p>Active Students</p>
-            </div>
-
+        <div className="home-hero__visual">
+          <div className="hero-book-stack">
+            <div className="hero-book hero-book--1">📘</div>
+            <div className="hero-book hero-book--2">📗</div>
+            <div className="hero-book hero-book--3">📙</div>
+            <div className="hero-book hero-book--4">📕</div>
           </div>
         </div>
       </section>
 
-
-      <section className="categories-section">
-        <div className="container">
-          <h2 className="section-title">Browse By Categories</h2>
-          <p className="section-subtitle">Find resources for your courses</p>
-
-          <div className="categories-grid">
-
-            {categories?.map((cat, index) => (
-              <div key={index} className="category-card">
-
-                <div className="category-img-container">
-                  <img
-                    src={cat.coverImage || "/images/default-subject.jpg"}
-                    alt={cat.category}
-                    loading="lazy"
-                  />
-                </div>
-
-                <div className="category-info">
-                  <h3>{cat.category}</h3>
-                  <p>Books: {cat.count}</p>
-
-                  <Link
-                    to={`/books?category=${cat.category}`}
-                    className="btn btn-outline"
-                  >
-                    View Collection
-                  </Link>
-                </div>
-
-              </div>
-            ))}
-
+      {/* Stats */}
+      <section className="home-stats">
+        <div className="home-stats__inner">
+          <div className="home-stat-card">
+            <span className="home-stat__num">{stats?.totalBooks || 0}+</span>
+            <span className="home-stat__label">Total Books</span>
           </div>
-
-          <div className="text-center">
-            <Link to="/category" className="btn btn-view-all">
-              View All Categories
-            </Link>
+          <div className="home-stat-card">
+            <span className="home-stat__num">{stats?.totalCategories || 0}+</span>
+            <span className="home-stat__label">Categories</span>
+          </div>
+          <div className="home-stat-card">
+            <span className="home-stat__num">{stats?.totalActiveStudents || 0}</span>
+            <span className="home-stat__label">Active Readers</span>
           </div>
         </div>
       </section>
 
-
-      <section className="na-section">
-        <div className="na-container">
-
-          <h2 className="na-heading">New Arrivals</h2>
-          <p className="na-subheading">
-            Recently added to our collection
-          </p>
-
-          <div className="na-grid-container">
-
-            {newArrivals?.map((book, index) => (
-              <div key={index} className="na-book-item">
-
-                <div className="na-cover-wrapper">
-                  <img
-                    src={book.coverImage || "/images/default-book.jpg"}
-                    alt={book.title}
-                    className="na-cover-image"
-                    loading="lazy"
-                  />
-                </div>
-
-                <div className="na-book-info">
-                  <h3 className="na-book-title">{book.title}</h3>
-                  <p className="na-book-author">{book.author}</p>
-                  <span className="na-book-category">
-                    {book.category}
-                  </span>
-                </div>
-
-              </div>
-            ))}
-
+      {/* Categories */}
+      {categories.length > 0 && (
+        <section className="home-section">
+          <div className="home-section__inner">
+            <div className="home-section__header">
+              <h2 className="home-section__title">Browse by Category</h2>
+              <p className="home-section__sub">Find books tailored to your course</p>
+            </div>
+            <div className="home-cats-grid">
+              {categories.map((cat, index) => (
+                <Link
+                  key={index}
+                  to={`/books?category=${cat.category}`}
+                  className="home-cat-card"
+                >
+                  <div className="home-cat-card__img-wrap">
+                    <img
+                      src={cat.coverImage || "https://via.placeholder.com/200x140?text=📚"}
+                      alt={cat.category}
+                      loading="lazy"
+                      onError={(e) => { e.target.src = "https://via.placeholder.com/200x140?text=Books"; }}
+                    />
+                    <div className="home-cat-card__overlay"></div>
+                  </div>
+                  <div className="home-cat-card__body">
+                    <h3 className="home-cat-card__name">{cat.category}</h3>
+                    <span className="home-cat-card__count">{cat.count} books</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <div className="home-section__cta">
+              <Link to="/category" className="home-view-all-btn">View All Categories →</Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
+      {/* New Arrivals */}
+      {newArrivals.length > 0 && (
+        <section className="home-section home-section--dark">
+          <div className="home-section__inner">
+            <div className="home-section__header">
+              <h2 className="home-section__title">New Arrivals</h2>
+              <p className="home-section__sub">Recently added to our collection</p>
+            </div>
+            <div className="home-arrivals-grid">
+              {newArrivals.slice(0, 6).map((book, index) => (
+                <Link key={index} to={`/bookdetails/${book._id}`} className="home-arrival-card">
+                  <div className="home-arrival-card__img-wrap">
+                    <img
+                      src={book.coverImage || "https://via.placeholder.com/120x170?text=Book"}
+                      alt={book.title}
+                      loading="lazy"
+                      onError={(e) => { e.target.src = "https://via.placeholder.com/120x170?text=Book"; }}
+                    />
+                  </div>
+                  <div className="home-arrival-card__info">
+                    <h4 className="home-arrival-card__title">{book.title}</h4>
+                    <p className="home-arrival-card__author">{book.author}</p>
+                    <span className="home-arrival-card__cat">{book.category}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
-      <section className="hours-section">
-        <div className="container">
-
-          <h2 className="section-title">Library Hours</h2>
-
-          <div className="hours-grid">
-
-            <div className="hours-card">
-              <FiClock className="hours-icon" />
+      {/* Library Hours */}
+      <section className="home-section">
+        <div className="home-section__inner">
+          <div className="home-section__header">
+            <h2 className="home-section__title">Library Hours</h2>
+            <p className="home-section__sub">We're here when you need us</p>
+          </div>
+          <div className="home-hours-grid">
+            <div className="home-hours-card">
+              <div className="home-hours-card__icon">🕗</div>
               <h3>Regular Hours</h3>
-              <p>Monday - Friday: 8:00 AM - 8:00 PM</p>
-              <p>Saturday: 10:00 AM - 5:00 PM</p>
-              <p>Sunday: Closed</p>
+              <ul>
+                <li>Monday – Friday: <strong>8:00 AM – 8:00 PM</strong></li>
+                <li>Saturday: <strong>10:00 AM – 5:00 PM</strong></li>
+                <li>Sunday: <strong>Closed</strong></li>
+              </ul>
             </div>
-
-            <div className="hours-card">
-              <FiCalendar className="hours-icon" />
+            <div className="home-hours-card">
+              <div className="home-hours-card__icon">📅</div>
               <h3>Exam Period</h3>
-              <p>Monday - Sunday: 7:00 AM - 11:00 PM</p>
+              <ul>
+                <li>Monday – Sunday</li>
+                <li><strong>7:00 AM – 11:00 PM</strong></li>
+                <li>Extended access for all students</li>
+              </ul>
             </div>
-
           </div>
         </div>
       </section>

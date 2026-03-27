@@ -1,7 +1,37 @@
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
- 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #0f1117;
+  color: #e8eaf0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Remove Bootstrap blue focus outline globally */
+*:focus {
+  outline: none;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0f1117;
+}
+::-webkit-scrollbar-thumb {
+  background: #2d3148;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6366f1;
+}

@@ -1,90 +1,95 @@
-import React,{useState} from "react";
-import {Link,useNavigate} from "react-router-dom";
-export default function Navbar(){
+import React, { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import "./navbar.css";
 
-    const [menuOpen, setMenuOpen] = useState(false);
+export default function Navbar() {
+  const [menuOpen, setMenuOpen] = useState(false);
   const token = localStorage.getItem("authToken");
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
+    localStorage.removeItem("role");
     navigate("/login");
   };
 
+  const isActive = (path) => location.pathname === path;
 
-    return(
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow">
-    <div className="container">
-      
-      <Link className="navbar-brand fw-bold" to="/">
-        📚 AGC Library
-      </Link>
+  return (
+    <nav className="user-navbar">
+      <div className="user-navbar__inner">
+        <Link className="user-navbar__brand" to="/">
+          <span className="brand-icon">📚</span>
+          <span className="brand-text">AGC Library</span>
+        </Link>
 
-      
-      <button
-        className="navbar-toggler"
-        type="button"
-        onClick={() => setMenuOpen(!menuOpen)}
-      >
-        <span className="navbar-toggler-icon"></span>
-      </button>
+        <button
+          className={`user-navbar__hamburger ${menuOpen ? "open" : ""}`}
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle menu"
+        >
+          <span></span><span></span><span></span>
+        </button>
 
- 
-      <div className={`collapse navbar-collapse ${menuOpen ? "show" : ""}`}>
-        <ul className="navbar-nav me-auto">
-          <li className="nav-item">
-            <Link className="nav-link" to="/">Home</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/books">Books</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/category">Category</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/aboutus">About</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/contactus">Contact</Link>
-          </li>
-        </ul>
+        <div className={`user-navbar__links ${menuOpen ? "show" : ""}`}>
+          <ul className="user-navbar__nav">
+            {[
+              { to: "/", label: "Home" },
+              { to: "/books", label: "Books" },
+              { to: "/category", label: "Categories" },
+              { to: "/aboutus", label: "About" },
+              { to: "/contactus", label: "Contact" },
+            ].map(({ to, label }) => (
+              <li key={to}>
+                <Link
+                  className={`user-navbar__link ${isActive(to) ? "active" : ""}`}
+                  to={to}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
 
-    
-        <ul className="navbar-nav">
-          {token ? (
-            <li className="nav-item dropdown">
-              <button
-                className="btn btn-light dropdown-toggle"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                👤 Profile
-              </button>
-              <ul className="dropdown-menu dropdown-menu-end">
-                <li>
-                  <Link className="dropdown-item" to="/user">My Profile</Link>
-                </li>
-                <li><hr className="dropdown-divider" /></li>
-                <li>
-                  <button className="dropdown-item" onClick={handleLogout}>
-                    Logout
+          <ul className="user-navbar__right">
+            {token ? (
+              <li className="user-navbar__profile-wrap">
+                <div className="user-navbar__profile-btn">
+                  <div className="user-navbar__avatar">U</div>
+                  <span>Profile</span>
+                  <svg viewBox="0 0 12 8" fill="none" width="10">
+                    <path d="M1 1l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                </div>
+                <div className="user-navbar__dropdown">
+                  <Link className="user-navbar__drop-item" to="/user" onClick={() => setMenuOpen(false)}>
+                    👤 My Profile
+                  </Link>
+                  <hr className="user-navbar__divider" />
+                  <button className="user-navbar__drop-item user-navbar__drop-item--logout" onClick={handleLogout}>
+                    🚪 Logout
                   </button>
+                </div>
+              </li>
+            ) : (
+              <>
+                <li>
+                  <Link className="user-navbar__login-btn" to="/login" onClick={() => setMenuOpen(false)}>
+                    Login
+                  </Link>
                 </li>
-              </ul>
-            </li>
-          ) : (
-            <>
-              <li className="nav-item">
-                <Link className="btn btn-light me-2" to="/login">Login</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="btn btn-outline-light" to="/register">Signup</Link>
-              </li>
-            </>
-          )}
-        </ul>
+                <li>
+                  <Link className="user-navbar__signup-btn" to="/register" onClick={() => setMenuOpen(false)}>
+                    Sign Up
+                  </Link>
+                </li>
+              </>
+            )}
+          </ul>
+        </div>
       </div>
-    </div>
-  </nav>
-    )
+    </nav>
+  );
 }

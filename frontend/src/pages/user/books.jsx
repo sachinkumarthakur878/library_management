@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import "./books.css"
-import { useNavigate } from "react-router-dom";
+import "./books.css";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Server_URL } from "../../utils/config";
 import { showErrorToast, showSuccessToast } from "../../utils/toasthelper";
-
 
 const Books = () => {
   const [books, setBooks] = useState([]);
@@ -13,70 +12,67 @@ const Books = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [isLoading, setIsLoading] = useState(true);
-
+  const [issuingId, setIssuingId] = useState(null);
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-
+  // Issue a book - URL is correct: books/borrow/request-issue/:bookid
   async function issueBook(bookid) {
-        try {
-          console.log("bookId");
-            console.log(bookid);
-          const authToken = localStorage.getItem("authToken");
-          console.log(authToken)
-          if (!authToken) {
-            showErrorToast("Please login to issue a book.");
-            return;
-        }
-           const url =Server_URL + 'borrow/request-issue/'+bookid;
-           const response = await axios.post(`${Server_URL}books/borrow/request-issue/${bookid}`,{}, {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          });
-
-          // alert(response.data);
-          const {error,message} = response.data;
-          if(error){
-            console.log(error);
-            showErrorToast(message)
-          }
-          else{
-            showSuccessToast(message);
-          }
-        } catch (error) {
-          // console.error("Error:", error.response?.data || error.message);
-          showErrorToast(error.response?.data?.message || "Something went wrong! Please try again.");
-          
-        }    
+    try {
+      setIssuingId(bookid);
+      const authToken = localStorage.getItem("authToken");
+      if (!authToken) {
+        showErrorToast("Please login to issue a book.");
+        navigate("/login");
+        return;
       }
-    
-      async function bookDetails(bookid) {
-        console.log(bookid)
-        navigate(`/bookdetails/${bookid}`);       
+      const response = await axios.post(
+        `${Server_URL}books/borrow/request-issue/${bookid}`,
+        {},
+        { headers: { Authorization: `Bearer ${authToken}` } }
+      );
+      const { error, message } = response.data;
+      if (error) {
+        showErrorToast(message);
+      } else {
+        showSuccessToast(message);
       }
+    } catch (error) {
+      showErrorToast(error.response?.data?.message || "Something went wrong!");
+    } finally {
+      setIssuingId(null);
+    }
+  }
 
   useEffect(() => {
     setIsLoading(true);
     axios.get(`${Server_URL}books`)
       .then((response) => {
         if (!response.data.error) {
-          setBooks(response.data.books);
-          setFilteredBooks(response.data.books);
-          const uniqueCategories = ["All", ...new Set(response.data.books.map(book => book.category))];
+          const booksData = response.data.books;
+          setBooks(booksData);
+          const uniqueCategories = ["All", ...new Set(booksData.map(b => b.category))];
           setCategories(uniqueCategories);
+
+          // Read category from URL query param
+          const catParam = searchParams.get("category");
+          if (catParam) {
+            setSelectedCategory(catParam);
+            setFilteredBooks(booksData.filter(b => b.category === catParam));
+          } else {
+            setFilteredBooks(booksData);
+          }
         }
       })
-      .catch((error) => {
-        console.error("Error fetching books:", error);
-      }).finally(() => {
-        setIsLoading(false);
-      });
+      .catch((error) => console.error("Error fetching books:", error))
+      .finally(() => setIsLoading(false));
   }, []);
 
   const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-    filterBooks(e.target.value, selectedCategory);
+    const val = e.target.value;
+    setSearchTerm(val);
+    filterBooks(val, selectedCategory);
   };
 
   const handleCategoryChange = (category) => {
@@ -86,109 +82,112 @@ const Books = () => {
 
   const filterBooks = (search, category) => {
     let filtered = books;
-    
-    if (category !== "All") {
-      filtered = filtered.filter(book => book.category === category);
-    }
-    
-    if (search) {
-      filtered = filtered.filter(book => book.title.toLowerCase().includes(search.toLowerCase()));
-    }
-    
+    if (category !== "All") filtered = filtered.filter(b => b.category === category);
+    if (search) filtered = filtered.filter(b => b.title.toLowerCase().includes(search.toLowerCase()));
     setFilteredBooks(filtered);
   };
 
-
   return (
-    <div className="container-fluid books-container">
-      <div className="row">
-      
-        <div className="col-md-3 p-4 sidebar">
-          <h4 className="text-center mb-4">📚 Categories</h4>
-          <div className="category-scroll">
-            {categories.map((category, index) => (
-              <div
-                key={index}
-                className={`category-item ${
-                  selectedCategory === category ? "active" : ""
-                }`}
-                onClick={() => handleCategoryChange(category)}
-              >
-                {category}
-              </div>
-            ))}
+    <div className="books-page">
+      {/* Sidebar */}
+      <aside className="books-sidebar">
+        <h3 className="books-sidebar__title">Categories</h3>
+        <div className="books-sidebar__list">
+          {categories.map((cat, idx) => (
+            <button
+              key={idx}
+              className={`books-sidebar__item ${selectedCategory === cat ? "active" : ""}`}
+              onClick={() => handleCategoryChange(cat)}
+            >
+              {cat}
+              <span className="books-sidebar__count">
+                {cat === "All" ? books.length : books.filter(b => b.category === cat).length}
+              </span>
+            </button>
+          ))}
+        </div>
+      </aside>
+
+      {/* Main */}
+      <main className="books-main">
+        <div className="books-main__header">
+          <div>
+            <h2 className="books-main__title">
+              {selectedCategory === "All" ? "All Books" : selectedCategory}
+            </h2>
+            <p className="books-main__count">{filteredBooks.length} books found</p>
+          </div>
+          <div className="books-search">
+            <svg className="books-search__icon" viewBox="0 0 20 20" fill="none">
+              <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.5"/>
+              <path d="M13.5 13.5L17 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            <input
+              type="text"
+              className="books-search__input"
+              placeholder="Search by title..."
+              value={searchTerm}
+              onChange={handleSearch}
+            />
           </div>
         </div>
 
-        <div className="col-md-9 main-content">
-          <div className="search-header p-3">
-            <h2 className="page-title">All Books</h2>
-            <div className="search-box">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Search by title..."
-                value={searchTerm}
-                onChange={handleSearch}
-              />
-              <i className="bi bi-search search-icon"></i>
-            </div>
+        {isLoading ? (
+          <div className="books-loading">
+            <div className="books-loading__spinner"></div>
+            <p>Loading books...</p>
           </div>
-
-          {isLoading ? (
-            <div className="loading-spinner">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-            </div>
-          ) : filteredBooks.length > 0 ? (
-            <div className="books-grid">
-              {filteredBooks.map((book, index) => (
-                <div key={index} className="book-card">
-                  <div className="card-image-container">
-                    <img
-                      src={book.coverImage}
-                      className="card-image"
-                      alt={book.title}
-                      onError={(e) => {
-                        e.target.src = "https://via.placeholder.com/150x200?text=No+Cover";
-                      }}
-                    />
-                    <div className="book-badge">{book.category}</div>
+        ) : filteredBooks.length > 0 ? (
+          <div className="books-grid">
+            {filteredBooks.map((book) => (
+              <div key={book._id} className="book-card">
+                <div className="book-card__img-wrap" onClick={() => navigate(`/bookdetails/${book._id}`)}>
+                  <img
+                    src={book.coverImage || "https://via.placeholder.com/200x280?text=No+Cover"}
+                    alt={book.title}
+                    className="book-card__img"
+                    onError={(e) => { e.target.src = "https://via.placeholder.com/200x280?text=No+Cover"; }}
+                  />
+                  <div className="book-card__category">{book.category}</div>
+                  <div className={`book-card__avail ${book.availableCopies > 0 ? "avail--yes" : "avail--no"}`}>
+                    {book.availableCopies > 0 ? `${book.availableCopies} avail.` : "Unavailable"}
                   </div>
-                  <div className="card-body">
-                    <h5 className="card-title">{book.title}</h5>
-                    <p className="card-author">By {book.author}</p>
-                    <div className="card-footer">
-                      <span className="card-price">₹{book.price}</span>
-                      <div className="card-actions">
-                        <button
-                          className="btn btn-outline-primary btn-sm"
-                          onClick={() => bookDetails(book._id)}
-                        >
-                          Details
-                        </button>
-                        <button
-                          className="btn btn-primary btn-sm"
-                          onClick={() => issueBook(book._id)}
-                        >
-                          Issue
-                        </button>
-                      </div>
+                </div>
+                <div className="book-card__body">
+                  <h5 className="book-card__title" onClick={() => navigate(`/bookdetails/${book._id}`)}>
+                    {book.title}
+                  </h5>
+                  <p className="book-card__author">by {book.author}</p>
+                  <div className="book-card__footer">
+                    <span className="book-card__price">₹{book.price}</span>
+                    <div className="book-card__actions">
+                      <button
+                        className="book-card__btn book-card__btn--outline"
+                        onClick={() => navigate(`/bookdetails/${book._id}`)}
+                      >
+                        Details
+                      </button>
+                      <button
+                        className="book-card__btn book-card__btn--primary"
+                        onClick={() => issueBook(book._id)}
+                        disabled={book.availableCopies <= 0 || issuingId === book._id}
+                      >
+                        {issuingId === book._id ? "..." : "Issue"}
+                      </button>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="no-books-found">
-              <i className="bi bi-book-slash"></i>
-              <h4>No books found!</h4>
-              <p>Try adjusting your search or category filter</p>
-            </div>
-          )}
-        </div>
-      </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="books-empty">
+            <span className="books-empty__icon">📭</span>
+            <h4>No books found</h4>
+            <p>Try a different search or category</p>
+          </div>
+        )}
+      </main>
     </div>
   );
 };

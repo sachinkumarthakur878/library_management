@@ -7,12 +7,14 @@ const BorrowSchema = new Schema({
   dueDate: { type: Date, required: true },
   returnDate: { type: Date, default: null },
   fineAmount: { type: Number, default: 0 },
+  fineStatus: { 
+    type: String, 
+    enum: ["none", "due", "paid"], 
+    default: "none" 
+  },
   status: { type: String, enum: ["Requested","Issued","Requested Return", "Returned"], default: "Requested" },
   approvedBy: { type: Schema.Types.ObjectId, ref: "User", default: null }
 
 },{ timestamps: true })
 
 module.exports = {BorrowSchema};
-
-
-

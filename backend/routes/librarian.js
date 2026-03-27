@@ -11,6 +11,8 @@ router.get("/returnrequest",userAuth,checkRole("librarian"),librarianController.
 router.put("/approverequest/:id",userAuth,checkRole("librarian"),librarianController.approveRequest)
 router.put("/approvereturnrequest/:id",userAuth,checkRole("librarian"),librarianController.approveReturnRequest)
 
-
+// Fine management routes
+router.get("/fines",userAuth,checkRole(["admin", "librarian"]),librarianController.getAllFines)
+router.put("/markfinepaid/:id",userAuth,checkRole(["admin", "librarian"]),librarianController.markFinePaid)
 
 module.exports = router

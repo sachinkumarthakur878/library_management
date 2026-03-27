@@ -2,40 +2,44 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Server_URL } from "../../utils/config";
 import { showErrorToast, showSuccessToast } from "../../utils/toasthelper";
-
+import "./LibrarianPages.css";
 
 export default function ReturnRequest() {
   const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchRequests = async () => {
+    try {
+      setLoading(true);
+      const url = Server_URL + "librarian/returnrequest";
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
+      setRequests(res.data.requests);
+    } catch (err) {
+      console.error("Error fetching requests", err);
+      showErrorToast("Failed to load return requests");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const url = Server_URL + "librarian/returnrequest"
-        const res = await axios.get(url, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`
-          }
-        });
-        console.log(res);
-        setRequests(res.data.requests);
-      } catch (err) {
-        console.error("Error fetching requests", err);
-      }
-    };
-
     fetchRequests();
   }, []);
 
   const approveRequest = async (id) => {
     try {
-        const url = Server_URL + "librarian/approvereturnrequest/" + id;
-      const response = await axios.put(url , {}, {
+      const url = Server_URL + "librarian/approvereturnrequest/" + id;
+      const response = await axios.put(url, {}, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
       });
-      showSuccessToast(response.data.message || "Book Return successfully!");
-      setRequests(prev => prev.filter(req => req._id !== id));
+      showSuccessToast(response.data.message || "Book Return approved!");
+      setRequests((prev) => prev.filter((req) => req._id !== id));
     } catch (err) {
       console.error("Error approving request", err);
       showErrorToast("Failed to approve request");
@@ -43,40 +47,70 @@ export default function ReturnRequest() {
   };
 
   return (
-    <div className="container mt-5">
-      <h2 className="mb-4">📚 Return Book Requests</h2>
+    <div className="lib-page">
+      <div className="lib-header">
+        <div>
+          <h1 className="lib-title">Return Requests</h1>
+          <p className="lib-subtitle">Review and approve book return requests from users</p>
+        </div>
+        <div className="lib-count-badge">{requests.length} pending</div>
+      </div>
 
-      {requests.length === 0 ? (
-        <div className="alert alert-info">No pending requests.</div>
+      {loading ? (
+        <div className="lib-loading">
+          <div className="lib-spinner"></div>
+          <p>Fetching requests...</p>
+        </div>
+      ) : requests.length === 0 ? (
+        <div className="lib-empty">
+          <span className="lib-empty-icon">📭</span>
+          <h3>No pending return requests</h3>
+          <p>All books have been returned or no requests exist yet.</p>
+        </div>
       ) : (
-        <div className="table-responsive">
-          <table className="table table-bordered table-striped">
-            <thead className="table-primary">
+        <div className="lib-table-wrapper">
+          <table className="lib-table">
+            <thead>
               <tr>
-                <th>User Name</th>
-                <th>Book Title</th>
+                <th>User</th>
+                <th>Book</th>
                 <th>Issue Date</th>
                 <th>Due Date</th>
                 <th>Fine</th>
                 <th>Status</th>
-                <th>Actions</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
               {requests.map((req) => (
-                <tr key={req._id}>
-                  <td>{req.userId?.name || "N/A"}</td>
-                  <td>{req.bookId?.title || "N/A"}</td>
-                  <td>{new Date(req.issueDate).toLocaleDateString()}</td>
-                  <td>{new Date(req.dueDate).toLocaleDateString()}</td>
-                  <td><span >₹{req.fine}</span></td>
-                  <td><span className="badge bg-warning">{req.status}</span></td>
+                <tr key={req._id} className="lib-row">
+                  <td>
+                    <div className="lib-user-cell">
+                      <div className="lib-avatar">{req.userId?.name?.[0]?.toUpperCase() || "?"}</div>
+                      <div>
+                        <div className="lib-user-name">{req.userId?.name || "N/A"}</div>
+                        <div className="lib-user-email">{req.userId?.email || ""}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="lib-book-title">{req.bookId?.title || "N/A"}</td>
+                  <td className="lib-date">{new Date(req.issueDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</td>
+                  <td className="lib-date">{new Date(req.dueDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</td>
+                  <td>
+                    <span className={`lib-fine ${req.fine > 0 ? "lib-fine--due" : "lib-fine--none"}`}>
+                      ₹{req.fine}
+                      {req.fine > 0 && <span className="fine-flag"> ⚠️</span>}
+                    </span>
+                  </td>
+                  <td>
+                    <span className="lib-status lib-status--return">Return Requested</span>
+                  </td>
                   <td>
                     <button
-                      className="btn btn-success btn-sm"
+                      className="lib-approve-btn"
                       onClick={() => approveRequest(req._id)}
                     >
-                      ✅ Approve
+                      Approve Return
                     </button>
                   </td>
                 </tr>
