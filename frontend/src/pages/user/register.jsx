@@ -33,7 +33,7 @@ export default function Register() {
         <div className="auth-card__header">
           <span className="auth-brand-icon">📚</span>
           <h2 className="auth-title">Create Account</h2>
-          <p className="auth-subtitle">Join the AGC Library community</p>
+          <p className="auth-subtitle">Join the AKTU Library community</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="auth-form">

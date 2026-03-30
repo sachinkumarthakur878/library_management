@@ -20,7 +20,7 @@ export default function AdminNavbar(){
     <div className="container">
      
       <Link className="navbar-brand fw-bold" to="/admin">
-        📚 AGC Library
+        📚 AKTU Library
       </Link>
 
     

@@ -102,9 +102,6 @@
 
 /* Profile dropdown */
 .user-navbar__profile-wrap { position: relative; }
-.user-navbar__profile-wrap:hover .user-navbar__dropdown {
-  opacity: 1; pointer-events: all; transform: translateY(0);
-}
 
 .user-navbar__profile-btn {
   display: flex;
@@ -118,6 +115,15 @@
   color: #e8eaf0;
   font-size: 0.875rem;
   font-weight: 500;
+  transition: background 0.18s ease;
+}
+.user-navbar__profile-btn:hover { background: rgba(255,255,255,0.09); }
+
+.dropdown-arrow {
+  transition: transform 0.2s ease;
+}
+.dropdown-arrow.rotated {
+  transform: rotate(180deg);
 }
 
 .user-navbar__avatar {
@@ -138,10 +144,13 @@
   padding: 0.4rem;
   min-width: 170px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-  opacity: 0; pointer-events: none;
-  transform: translateY(-6px);
-  transition: all 0.18s ease;
+  animation: dropFadeIn 0.15s ease forwards;
   z-index: 100;
+}
+
+@keyframes dropFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .user-navbar__drop-item {

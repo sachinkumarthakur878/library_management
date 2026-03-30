@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./navbar.css";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const token = localStorage.getItem("authToken");
   const navigate = useNavigate();
   const location = useLocation();
+  const dropdownRef = useRef(null);
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
@@ -16,12 +18,23 @@ export default function Navbar() {
 
   const isActive = (path) => location.pathname === path;
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <nav className="user-navbar">
       <div className="user-navbar__inner">
         <Link className="user-navbar__brand" to="/">
           <span className="brand-icon">📚</span>
-          <span className="brand-text">AGC Library</span>
+          <span className="brand-text">AKTU Library</span>
         </Link>
 
         <button
@@ -55,23 +68,41 @@ export default function Navbar() {
 
           <ul className="user-navbar__right">
             {token ? (
-              <li className="user-navbar__profile-wrap">
-                <div className="user-navbar__profile-btn">
+              <li className="user-navbar__profile-wrap" ref={dropdownRef}>
+                <button
+                  className="user-navbar__profile-btn"
+                  onClick={() => setDropdownOpen((prev) => !prev)}
+                  aria-expanded={dropdownOpen}
+                >
                   <div className="user-navbar__avatar">U</div>
                   <span>Profile</span>
-                  <svg viewBox="0 0 12 8" fill="none" width="10">
+                  <svg
+                    viewBox="0 0 12 8"
+                    fill="none"
+                    width="10"
+                    className={`dropdown-arrow ${dropdownOpen ? "rotated" : ""}`}
+                  >
                     <path d="M1 1l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                   </svg>
-                </div>
-                <div className="user-navbar__dropdown">
-                  <Link className="user-navbar__drop-item" to="/user" onClick={() => setMenuOpen(false)}>
-                    👤 My Profile
-                  </Link>
-                  <hr className="user-navbar__divider" />
-                  <button className="user-navbar__drop-item user-navbar__drop-item--logout" onClick={handleLogout}>
-                    🚪 Logout
-                  </button>
-                </div>
+                </button>
+                {dropdownOpen && (
+                  <div className="user-navbar__dropdown">
+                    <Link
+                      className="user-navbar__drop-item"
+                      to="/user"
+                      onClick={() => { setMenuOpen(false); setDropdownOpen(false); }}
+                    >
+                      👤 My Profile
+                    </Link>
+                    <hr className="user-navbar__divider" />
+                    <button
+                      className="user-navbar__drop-item user-navbar__drop-item--logout"
+                      onClick={() => { handleLogout(); setDropdownOpen(false); }}
+                    >
+                      🚪 Logout
+                    </button>
+                  </div>
+                )}
               </li>
             ) : (
               <>

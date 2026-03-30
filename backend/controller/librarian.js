@@ -82,6 +82,10 @@ librarianController.approveRequest = async (req, res) => {
 
     borrowRequest.status = "Issued";
     borrowRequest.approvedBy = req.userInfo.id;
+    // Use librarian-selected dueDate if provided, else keep existing
+    if (req.body.dueDate) {
+      borrowRequest.dueDate = new Date(req.body.dueDate);
+    }
     await borrowRequest.save();
     clearCache("homeData");
     res.json({ message: "Book issued successfully", borrow: borrowRequest });

@@ -42,7 +42,7 @@ export default function Home() {
       <section className="home-hero">
         <div className="home-hero__bg"></div>
         <div className="home-hero__content">
-          <span className="home-hero__badge">AGC College Library</span>
+          <span className="home-hero__badge">AKTU College Library</span>
           <h1 className="home-hero__title">
             Your Gateway to
             <span className="home-hero__title-accent"> Knowledge</span>
