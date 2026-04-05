@@ -34,7 +34,7 @@ export default function Navbar() {
       <div className="user-navbar__inner">
         <Link className="user-navbar__brand" to="/">
           <span className="brand-icon">📚</span>
-          <span className="brand-text">AKTU Library</span>
+          <span className="brand-text">A & R Library</span>
         </Link>
 
         <button

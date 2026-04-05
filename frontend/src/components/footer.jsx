@@ -12,7 +12,7 @@ const Footer = () => {
         <div className="footer-main">
 
           <div className="footer-column">
-            <h3 className="footer-heading">AKTU Library</h3>
+            <h3 className="footer-heading">A & R Library</h3>
             <p className="footer-about-text">
               The College Library serves as the academic hub of our institution,
               providing resources and services to support learning, teaching,
@@ -66,7 +66,7 @@ const Footer = () => {
 
         <div className="footer-bottom">
           <div className="footer-copyright">
-            &copy; {new Date().getFullYear()} AKTU College Library. All rights reserved.
+            &copy; {new Date().getFullYear()} A & R College Library. All rights reserved.
           </div>
           <div className="footer-legal">
             <Link to="/privacy" className="legal-link" onClick={scrollTop}>Privacy Policy</Link>
